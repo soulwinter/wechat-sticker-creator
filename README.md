@@ -1,30 +1,63 @@
-# wechat-sticker-creator
+# WeChat Sticker Creator
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+A user-friendly tool for processing WeChat stickers, creating avatars and icons.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/soulwinters-projects/v0-wechat-sticker-creator)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/7fgGu9SUiba)
+[中文文档](README.zh-CN.md)
 
-## Overview
+## Key Features
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+### 1. Sticker Processing
+- Automatic multi-sticker image splitting
+- Support for transparent and solid background images
+- Smart element detection and separation
+- Merge and delete sticker elements
+- Automatic size adjustment to WeChat specifications
 
-## Deployment
+### 2. Avatar and Icon Generation
+- Create WeChat avatars (240×240 pixels)
+- Generate sticker panel icons (50×50 pixels)
+- Compliance with WeChat official standards
+- One-click download functionality
 
-Your project is live at:
+## Usage Guide
 
-**[https://vercel.com/soulwinters-projects/v0-wechat-sticker-creator](https://vercel.com/soulwinters-projects/v0-wechat-sticker-creator)**
+1. **Process Stickers**
+   - Upload PNG or JPG images containing multiple stickers
+   - Automatic sticker splitting and processing
+   - Edit, merge, or delete sticker elements
+   - Download processed stickers
 
-## Build your app
+2. **Create Avatars and Icons**
+   - Select suitable images from processed stickers
+   - Auto-generate avatars and icons
+   - Check compliance with standards
+   - Download generated assets
 
-Continue building your app on:
+## Tech Stack
 
-**[https://v0.dev/chat/projects/7fgGu9SUiba](https://v0.dev/chat/projects/7fgGu9SUiba)**
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Canvas API
 
-## How It Works
+## Development Setup
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build production version
+npm run build
+```
+
+## Contributing
+
+Issues and Pull Requests are welcome to help improve this project.
+
+## License
+
+MIT License
