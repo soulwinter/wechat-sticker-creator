@@ -6,7 +6,7 @@ import { useState, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Upload, Download, AlertCircle, Layers, X, Trash2 } from "lucide-react"
+import { Loader2, Upload, Download, AlertCircle, Layers, X, Trash2, MessageSquare, ImageIcon, Info } from "lucide-react"
 import ImageSplitter from "./image-splitter"
 import ImageProcessor from "./image-processor"
 import ImageMerger from "./image-merger"
@@ -155,7 +155,7 @@ export default function StepTwo() {
         return [...newRegions, mergedRegion]
       })
 
-      // 清除选择并退出选择模式
+      // 清除选择
       setSelectedImages([])
       setIsMerging(false)
     } catch (err) {
@@ -263,179 +263,215 @@ export default function StepTwo() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>分割和调整表情包</CardTitle>
-        <CardDescription>
-          上传包含多个表情的 PNG 或 JPG 图片，系统将自动分割并调整为微信表情尺寸。推荐透明背景 PNG 照片，JPG
-          格式效果可能不佳。
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <input
-            type="file"
-            accept=".png,.jpg,.jpeg"
-            className="hidden"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-          />
-
-          {!image ? (
-            <div
-              className="border-2 border-dashed rounded-lg p-12 text-center cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={handleUploadClick}
-            >
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
-              <p className="mt-2 text-sm text-gray-600">点击上传PNG或JPG图片</p>
-              <p className="text-xs text-gray-500 mt-1">支持透明背景和纯色背景</p>
+    <div className="space-y-6">
+      {/* 步骤一内容 - AI生成提示 */}
+      <Card className="border-dashed border-gray-300">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            AI生成表情包提示
+          </CardTitle>
+          <CardDescription>使用AI生成表情包后，可以在下方上传进行分割和处理</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-gray-50 p-4 rounded-lg border">
+            <h3 className="text-sm font-medium flex items-center gap-2 mb-2">
+              <ImageIcon className="h-4 w-4" />
+              推荐的提示词模板
+            </h3>
+            <div className="bg-white p-3 rounded border text-sm">
+              <code className="block whitespace-pre-wrap text-xs">
+                请将这张照片制作成一套卡通贴图(sticker set)： 1. 每个贴图不要互相重叠 2. 保留原始脸部特征 3.
+                使用透明背景 4. 添加简单白色边框 5. 风格：[可爱/简约/卡通/手绘]
+              </code>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <img src={image || "/placeholder.svg"} alt="上传的图片" className="max-h-64 mx-auto object-contain" />
+          </div>
+
+          <div className="flex items-start gap-2 text-sm text-muted-foreground">
+            <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <p>
+              您可以使用类似GPT-4o或DALL-E等AI模型生成表情包，然后在下方上传进行处理。
+              生成后的表情包可能需要进一步分割和调整。
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 步骤二内容 - 分割和处理 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>分割和处理表情包</CardTitle>
+          <CardDescription>
+            上传包含多个表情的 PNG 或 JPG 图片，系统将自动分割并调整为微信表情尺寸。推荐透明背景 PNG 照片，JPG
+            格式效果可能不佳。
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <input
+              type="file"
+              accept=".png,.jpg,.jpeg"
+              className="hidden"
+              onChange={handleFileChange}
+              ref={fileInputRef}
+            />
+
+            {!image ? (
+              <div
+                className="border-2 border-dashed rounded-lg p-12 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={handleUploadClick}
+              >
+                <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                <p className="mt-2 text-sm text-gray-600">点击上传PNG或JPG图片</p>
+                <p className="text-xs text-gray-500 mt-1">支持透明背景和纯色背景</p>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  <img src={image || "/placeholder.svg"} alt="上传的图片" className="max-h-64 mx-auto object-contain" />
+                </div>
 
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={handleUploadClick}>
-                  更换图片
-                </Button>
-                <Button onClick={handleSplitImage} disabled={isProcessing}>
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      处理中...
-                    </>
-                  ) : (
-                    "分割并处理图片"
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {processedImages.length > 0 && (
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-lg font-medium">处理结果 ({processedImages.length}个)</h3>
-                <div className="flex gap-2">
-                  {processedImages.length > 1 && (
-                    <Button size="sm" variant={isSelectionMode ? "default" : "outline"} onClick={toggleSelectionMode}>
-                      <Layers className="mr-2 h-4 w-4" />
-                      {isSelectionMode ? "退出编辑模式" : "进入编辑模式"}
-                    </Button>
-                  )}
-                  <Button size="sm" onClick={downloadAllImages}>
-                    <Download className="mr-2 h-4 w-4" />
-                    下载全部
+                <div className="flex justify-between">
+                  <Button variant="outline" onClick={handleUploadClick}>
+                    更换图片
+                  </Button>
+                  <Button onClick={handleSplitImage} disabled={isProcessing}>
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        处理中...
+                      </>
+                    ) : (
+                      "分割并处理图片"
+                    )}
                   </Button>
                 </div>
               </div>
+            )}
 
-              {isSelectionMode && (
-                <div className="bg-gray-50 p-3 rounded-md mb-3 flex flex-wrap gap-2 items-center">
-                  <span className="text-sm font-medium">编辑模式：</span>
-                  {selectedImages.length > 1 && (
-                    <Button size="sm" variant="outline" onClick={handleMergeSelected} disabled={isMerging}>
-                      {isMerging ? (
-                        <>
-                          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                          合并中...
-                        </>
-                      ) : (
-                        <>
-                          <Layers className="mr-1 h-4 w-4" />
-                          合并选中 ({selectedImages.length})
-                        </>
-                      )}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {processedImages.length > 0 && (
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-medium">处理结果 ({processedImages.length}个)</h3>
+                  <div className="flex gap-2">
+                    {processedImages.length > 1 && (
+                      <Button size="sm" variant={isSelectionMode ? "default" : "outline"} onClick={toggleSelectionMode}>
+                        <Layers className="mr-2 h-4 w-4" />
+                        {isSelectionMode ? "退出编辑模式" : "进入编辑模式"}
+                      </Button>
+                    )}
+                    <Button size="sm" onClick={downloadAllImages}>
+                      <Download className="mr-2 h-4 w-4" />
+                      下载全部
                     </Button>
-                  )}
-                  {selectedImages.length > 0 && (
-                    <Button size="sm" variant="destructive" onClick={handleDeleteSelected} disabled={isDeleting}>
-                      {isDeleting ? (
-                        <>
-                          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                          删除中...
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 className="mr-1 h-4 w-4" />
-                          删除选中 ({selectedImages.length})
-                        </>
-                      )}
-                    </Button>
-                  )}
-                  {selectedImages.length > 0 && (
-                    <Button size="sm" variant="outline" onClick={handleClearSelection}>
-                      <X className="mr-1 h-4 w-4" />
-                      清除选择
-                    </Button>
-                  )}
-                  <span className="text-xs text-gray-500 ml-auto">
-                    {selectedImages.length === 0
-                      ? "点击图片选择要操作的部分"
-                      : `已选择 ${selectedImages.length} 个部分`}
-                  </span>
+                  </div>
                 </div>
-              )}
 
-              {!isSelectionMode && (
-                <p className="text-sm text-gray-500 mb-3">
-                  鼠标悬停在图片上可以下载单个表情包，或点击"下载全部"一次性下载所有表情包。
-                  <br />
-                  如果有表情包被分割为多个部分或错误分割，可以点击编辑模式合并或删除。
-                </p>
-              )}
+                {isSelectionMode && (
+                  <div className="bg-gray-50 p-3 rounded-md mb-3 flex flex-wrap gap-2 items-center">
+                    <span className="text-sm font-medium">编辑模式：</span>
+                    {selectedImages.length > 1 && (
+                      <Button size="sm" variant="outline" onClick={handleMergeSelected} disabled={isMerging}>
+                        {isMerging ? (
+                          <>
+                            <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                            合并中...
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="mr-1 h-4 w-4" />
+                            合并选中 ({selectedImages.length})
+                          </>
+                        )}
+                      </Button>
+                    )}
+                    {selectedImages.length > 0 && (
+                      <Button size="sm" variant="destructive" onClick={handleDeleteSelected} disabled={isDeleting}>
+                        {isDeleting ? (
+                          <>
+                            <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                            删除中...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 className="mr-1 h-4 w-4" />
+                            删除选中 ({selectedImages.length})
+                          </>
+                        )}
+                      </Button>
+                    )}
+                    {selectedImages.length > 0 && (
+                      <Button size="sm" variant="outline" onClick={handleClearSelection}>
+                        <X className="mr-1 h-4 w-4" />
+                        清除选择
+                      </Button>
+                    )}
+                    <span className="text-xs text-gray-500 ml-auto">
+                      {selectedImages.length === 0
+                        ? "点击图片选择要操作的部分"
+                        : `已选择 ${selectedImages.length} 个部分`}
+                    </span>
+                  </div>
+                )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {processedImages.map((src, index) => {
-                  // 所有图像都可以选择
-                  const isSelectable = isSelectionMode
+                {!isSelectionMode && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    鼠标悬停在图片上可以下载单个表情包，或点击"下载全部"一次性下载所有表情包。
+                    <br />
+                    如果有表情包被分割为多个部分或错误分割，可以点击编辑模式合并或删除。
+                  </p>
+                )}
 
-                  return (
-                    <div
-                      key={index}
-                      className={`border rounded-lg p-2 relative group ${
-                        isSelectionMode ? "cursor-pointer" : "cursor-default"
-                      } ${
-                        isSelectionMode && selectedImages.includes(index)
-                          ? "ring-2 ring-blue-500 bg-blue-50"
-                          : "bg-gray-50"
-                      }`}
-                      onClick={() => isSelectable && handleImageSelect(index)}
-                    >
-                      <img
-                        src={src || "/placeholder.svg"}
-                        alt={`表情包 ${index + 1}`}
-                        className="w-full h-auto object-contain"
-                      />
-                      {isSelectionMode && selectedImages.includes(index) && (
-                        <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                          {selectedImages.indexOf(index) + 1}
-                        </div>
-                      )}
-                      {!isSelectionMode && (
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button size="sm" variant="secondary" onClick={() => downloadImage(src, index)}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {processedImages.map((src, index) => {
+                    // 所有图像都可以选择
+                    const isSelectable = isSelectionMode
+
+                    return (
+                      <div
+                        key={index}
+                        className={`border rounded-lg p-2 relative group ${
+                          isSelectionMode ? "cursor-pointer" : "cursor-default"
+                        } ${
+                          isSelectionMode && selectedImages.includes(index)
+                            ? "ring-2 ring-blue-500 bg-blue-50"
+                            : "bg-gray-50"
+                        }`}
+                        onClick={() => isSelectable && handleImageSelect(index)}
+                      >
+                        <img
+                          src={src || "/placeholder.svg"}
+                          alt={`表情包 ${index + 1}`}
+                          className="w-full h-auto object-contain"
+                        />
+                        {isSelectionMode && selectedImages.includes(index) && (
+                          <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                            {selectedImages.indexOf(index) + 1}
+                          </div>
+                        )}
+                        {!isSelectionMode && (
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button size="sm" variant="secondary" onClick={() => downloadImage(src, index)}>
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
