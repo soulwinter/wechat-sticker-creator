@@ -69,11 +69,11 @@ export default function StepThree({ processedImages, onImageSelect }: StepThreeP
                 <ImageIcon className="h-4 w-4" />
                 选择表情包
               </h3>
-              <div className="grid grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {processedImages.map((src, index) => (
                   <div
                     key={index}
-                    className={`border rounded-lg p-2 cursor-pointer hover:border-blue-500 transition-colors w-[120px] h-[120px] ${
+                    className={`border rounded-lg p-2 cursor-pointer hover:border-blue-500 transition-colors w-[120px] h-[120px] mx-auto ${
                       selectedImage === src ? "ring-2 ring-blue-500 bg-blue-50" : "bg-gray-50"
                     }`}
                     onClick={() => handleImageSelect(src)}

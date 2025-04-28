@@ -278,12 +278,29 @@ export default function StepTwo() {
           <div className="bg-gray-50 p-4 rounded-lg border">
             <h3 className="text-sm font-medium flex items-center gap-2 mb-2">
               <ImageIcon className="h-4 w-4" />
-              推荐的提示词模板
+              首先上传一张照片，
+              推荐的提示词模板：然后写（中括号内的是你可以修改的），
             </h3>
             <div className="bg-white p-3 rounded border text-sm">
               <code className="block whitespace-pre-wrap text-xs">
-                请将这张照片制作成一套卡通贴图(sticker set)： 1. 每个贴图不要互相重叠 2. 保留原始脸部特征 3.
-                使用透明背景 4. 添加简单白色边框 5. 风格：[可爱/简约/卡通/手绘]
+                
+                Turn me into a [chibi] sticker set, every sticker should not cover the other stickers.
+                <br></br>
+                Transparent background, [white border], try to retain character traits.
+                <br></br>
+                radio: 3:2
+                <br></br>
+                1. Happy / Smiling (waving hand)[你需要的表情包]
+                <br></br>
+                2. Laughing (maybe with a tilted head)[你需要的表情包]
+                <br></br>
+                3. Thumbs Up (cheerful)[你需要的表情包]
+                <br></br>
+                4. Thinking (hand on chin, curious face)[你需要的表情包]
+                <br></br>
+                5. Crying / Sad (cute watery eyes)[你需要的表情包]
+                <br></br>
+                6. Angry / Frustrated (small comic-style steam puffs)[你需要的表情包]
               </code>
             </div>
           </div>
