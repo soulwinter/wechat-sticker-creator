@@ -10,6 +10,7 @@ import { Loader2, Upload, Download, AlertCircle, Layers, X, Trash2, MessageSquar
 import ImageSplitter from "./image-splitter"
 import ImageProcessor from "./image-processor"
 import ImageMerger from "./image-merger"
+import StepThree from "./step-three"
 
 export default function StepTwo() {
   const [image, setImage] = useState<string | null>(null)
@@ -472,6 +473,11 @@ export default function StepTwo() {
           </div>
         </CardContent>
       </Card>
+
+      {/* 步骤三内容 - 生成头像和图标 */}
+      {processedImages.length > 0 && (
+        <StepThree processedImages={processedImages} />
+      )}
     </div>
   )
 }

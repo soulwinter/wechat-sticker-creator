@@ -63,4 +63,34 @@ export default class ImageProcessor {
       }
     })
   }
+
+  async resizeImage(src: string, width: number, height: number): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+      img.src = src
+
+      img.onload = () => {
+        try {
+          // 创建Canvas
+          const canvas = document.createElement("canvas")
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext("2d")!
+
+          // 绘制调整大小后的图像
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // 返回数据URL
+          resolve(canvas.toDataURL("image/png"))
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      img.onerror = () => {
+        reject(new Error("加载图片失败"))
+      }
+    })
+  }
 }
