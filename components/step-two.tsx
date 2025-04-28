@@ -278,15 +278,16 @@ export default function StepTwo() {
           <div className="bg-gray-50 p-4 rounded-lg border">
             <h3 className="text-sm font-medium flex items-center gap-2 mb-2">
               <ImageIcon className="h-4 w-4" />
-              首先上传一张照片，
-              推荐的提示词模板：然后写（中括号内的是你可以修改的），
+              推荐的提示词模板：
+              首先上传一张照片，然后写：（中括号内的是你可以修改的）
+
             </h3>
             <div className="bg-white p-3 rounded border text-sm">
               <code className="block whitespace-pre-wrap text-xs">
                 
-                Turn me into a [chibi] sticker set, every sticker should not cover the other stickers.
+                Turn me into a [chibi 此处填写风格] sticker set, Each sticker should not overlap with any other stickers and should have some space between them.
                 <br></br>
-                Transparent background, [white border], try to retain character traits.
+                Transparent background, try to retain character traits.
                 <br></br>
                 radio: 3:2
                 <br></br>
