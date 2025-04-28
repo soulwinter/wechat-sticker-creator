@@ -97,8 +97,9 @@ export default function StepTwo() {
   }
 
   const handleImageSelect = (index: number) => {
-    if (!isSelectionMode || index >= originalRegions.length) return
+    if (!isSelectionMode) return
 
+    // 所有图像都可以选择，不再限制为原始图像
     setSelectedImages((prev) => {
       if (prev.includes(index)) {
         return prev.filter((i) => i !== index)
@@ -135,6 +136,9 @@ export default function StepTwo() {
       const processor = new ImageProcessor()
       const processedMergedImage = await processor.processImages([mergedImageUrl])
 
+      // 计算合并后的区域（合并所有选中区域的边界框）
+      const mergedRegion = calculateMergedRegion(selectedRegions)
+
       // 更新处理后的图像列表 - 移除被合并的图像，添加合并后的图像
       setProcessedImages((prev) => {
         // 创建一个新数组，排除被合并的图像
@@ -143,13 +147,42 @@ export default function StepTwo() {
         return [...newImages, ...processedMergedImage]
       })
 
+      // 更新原始区域列表 - 移除被合并的区域，添加合并后的区域
+      setOriginalRegions((prev) => {
+        // 创建一个新数组，排除被合并的区域
+        const newRegions = prev.filter((_, index) => !selectedImages.includes(index))
+        // 添加合并后的区域
+        return [...newRegions, mergedRegion]
+      })
+
       // 清除选择并退出选择模式
       setSelectedImages([])
-      setIsSelectionMode(false)
       setIsMerging(false)
     } catch (err) {
       setError("合并图片时出错")
       setIsMerging(false)
+    }
+  }
+
+  // 计算合并后的区域（边界框）
+  const calculateMergedRegion = (regions: Array<{ x: number; y: number; width: number; height: number }>) => {
+    let minX = Number.MAX_VALUE
+    let minY = Number.MAX_VALUE
+    let maxX = 0
+    let maxY = 0
+
+    regions.forEach((region) => {
+      minX = Math.min(minX, region.x)
+      minY = Math.min(minY, region.y)
+      maxX = Math.max(maxX, region.x + region.width)
+      maxY = Math.max(maxY, region.y + region.height)
+    })
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
     }
   }
 
@@ -234,7 +267,8 @@ export default function StepTwo() {
       <CardHeader>
         <CardTitle>分割和调整表情包</CardTitle>
         <CardDescription>
-          上传包含多个表情的 PNG 或 JPG 图片，系统将自动分割并调整为微信表情尺寸。推荐透明背景 PNG 照片，JPG 格式效果可能不佳。
+          上传包含多个表情的 PNG 或 JPG 图片，系统将自动分割并调整为微信表情尺寸。推荐透明背景 PNG 照片，JPG
+          格式效果可能不佳。
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -309,7 +343,7 @@ export default function StepTwo() {
                 <div className="bg-gray-50 p-3 rounded-md mb-3 flex flex-wrap gap-2 items-center">
                   <span className="text-sm font-medium">编辑模式：</span>
                   {selectedImages.length > 1 && (
-                    <Button size="sm" variant="secondary" onClick={handleMergeSelected} disabled={isMerging}>
+                    <Button size="sm" variant="outline" onClick={handleMergeSelected} disabled={isMerging}>
                       {isMerging ? (
                         <>
                           <Loader2 className="mr-1 h-4 w-4 animate-spin" />
@@ -362,14 +396,14 @@ export default function StepTwo() {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {processedImages.map((src, index) => {
-                  const isOriginalImage = index < originalRegions.length
-                  const isSelectable = isSelectionMode && isOriginalImage
+                  // 所有图像都可以选择
+                  const isSelectable = isSelectionMode
 
                   return (
                     <div
                       key={index}
                       className={`border rounded-lg p-2 relative group ${
-                        isSelectionMode && isOriginalImage ? "cursor-pointer" : "cursor-default"
+                        isSelectionMode ? "cursor-pointer" : "cursor-default"
                       } ${
                         isSelectionMode && selectedImages.includes(index)
                           ? "ring-2 ring-blue-500 bg-blue-50"
