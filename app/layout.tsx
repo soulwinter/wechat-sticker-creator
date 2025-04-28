@@ -21,6 +21,8 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className={inter.className}>{children}</body>
+      <Analytics />
+      <SpeedInsights />
     </html>
   )
 }
