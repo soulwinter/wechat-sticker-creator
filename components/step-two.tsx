@@ -309,7 +309,7 @@ export default function StepTwo() {
           <div className="flex items-start gap-2 text-sm text-muted-foreground">
             <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <p>
-              您可以使用类似GPT-4o或DALL-E等AI模型生成表情包，然后在下方上传进行处理。
+              可以使用类似GPT-4o等AI模型生成表情包，然后在下方上传进行处理。
               生成后的表情包可能需要进一步分割和调整。
             </p>
           </div>
